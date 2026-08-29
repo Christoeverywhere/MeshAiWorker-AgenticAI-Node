@@ -1,0 +1,74 @@
+# ==========================================
+# MeshAIWorker - Android Git Ignore
+# ==========================================
+
+# ---------- Android Studio / IntelliJ ----------
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Android Studio user-specific files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/dictionaries/
+.idea/shelf/
+
+# ---------- Gradle ----------
+.gradle/
+gradle-app.setting
+.gradletasknamecache
+
+# Gradle wrapper JAR is SAFE to commit
+# gradle/wrapper/gradle-wrapper.jar
+
+# ---------- Build Outputs ----------
+**/build/
+build/
+out/
+
+# ---------- Local Machine Configuration ----------
+local.properties
+
+# ---------- Android Generated Files ----------
+.externalNativeBuild/
+.cxx/
+captures/
+
+# ---------- Kotlin / Java Generated Files ----------
+*.class
+*.log
+
+# ---------- Native / CMake ----------
+.cmake/
+
+# ---------- Android APK / AAB ----------
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# ---------- Signing / Keystores ----------
+*.jks
+*.keystore
+
+# IMPORTANT:
+# Never commit release signing keys or passwords.
+
+# ---------- Firebase / Secrets ----------
+google-services.json
+
+# ---------- OS Files ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- VS Code ----------
+.vscode/
+
+# ---------- Temporary / Backup Files ----------
+*.tmp
+*.temp
+*.bak
+*~
