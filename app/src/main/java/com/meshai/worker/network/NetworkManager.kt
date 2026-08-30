@@ -1,4 +1,4 @@
-﻿package com.meshai.worker.network
+package com.meshai.worker.network
 
 import android.util.Log
 import com.meshai.worker.model.NodeInfo
@@ -85,6 +85,74 @@ class NetworkManager {
                         if (continuation.isActive) continuation.resume(Result.failure(IOException("Node not found (404)")))
                     } else {
                         Log.e("MeshAI", "Heartbeat error: ${it.code}")
+                        if (continuation.isActive) continuation.resume(Result.failure(IOException("Unexpected code $it")))
+                    }
+                }
+            }
+        })
+    }
+
+    suspend fun pollTasks(baseUrl: String, nodeId: String): Result<com.meshai.worker.model.TaskResponse?> = suspendCancellableCoroutine { continuation ->
+        val url = "$baseUrl/api/v1/nodes/$nodeId/tasks"
+
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .build()
+
+        val call = client.newCall(request)
+        continuation.invokeOnCancellation { call.cancel() }
+
+        call.enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                if (continuation.isActive) continuation.resume(Result.failure(e))
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (it.isSuccessful) {
+                        val bodyString = it.body?.string()
+                        if (bodyString.isNullOrBlank() || bodyString == "null") {
+                            if (continuation.isActive) continuation.resume(Result.success(null))
+                        } else {
+                            try {
+                                val task = json.decodeFromString<com.meshai.worker.model.TaskResponse>(bodyString)
+                                if (continuation.isActive) continuation.resume(Result.success(task))
+                            } catch (e: Exception) {
+                                if (continuation.isActive) continuation.resume(Result.failure(e))
+                            }
+                        }
+                    } else {
+                        if (continuation.isActive) continuation.resume(Result.failure(IOException("Unexpected code $it")))
+                    }
+                }
+            }
+        })
+    }
+
+    suspend fun submitTaskResult(baseUrl: String, taskId: String, resultRequest: com.meshai.worker.model.TaskResultRequest): Result<Unit> = suspendCancellableCoroutine { continuation ->
+        val url = "$baseUrl/api/v1/tasks/$taskId/result"
+        val jsonBody = json.encodeToString(resultRequest)
+        val body = jsonBody.toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(url)
+            .post(body)
+            .build()
+
+        val call = client.newCall(request)
+        continuation.invokeOnCancellation { call.cancel() }
+
+        call.enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                if (continuation.isActive) continuation.resume(Result.failure(e))
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (it.isSuccessful) {
+                        if (continuation.isActive) continuation.resume(Result.success(Unit))
+                    } else {
                         if (continuation.isActive) continuation.resume(Result.failure(IOException("Unexpected code $it")))
                     }
                 }

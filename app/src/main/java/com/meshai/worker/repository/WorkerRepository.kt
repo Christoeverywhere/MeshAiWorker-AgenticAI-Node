@@ -19,4 +19,12 @@ class WorkerRepository(
     suspend fun heartbeat(baseUrl: String, nodeId: String, batteryPercent: Int): Result<Unit> {
         return networkManager.sendHeartbeat(baseUrl, nodeId, batteryPercent)
     }
+
+    suspend fun pollTasks(baseUrl: String, nodeId: String): Result<com.meshai.worker.model.TaskResponse?> {
+        return networkManager.pollTasks(baseUrl, nodeId)
+    }
+
+    suspend fun submitTaskResult(baseUrl: String, taskId: String, request: com.meshai.worker.model.TaskResultRequest): Result<Unit> {
+        return networkManager.submitTaskResult(baseUrl, taskId, request)
+    }
 }

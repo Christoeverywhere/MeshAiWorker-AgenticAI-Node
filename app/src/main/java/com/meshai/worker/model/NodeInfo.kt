@@ -1,4 +1,4 @@
-﻿package com.meshai.worker.model
+package com.meshai.worker.model
 
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -36,5 +36,39 @@ data class NodeInfo(
 
     @SerialName("port")
     @EncodeDefault
-    val port: Int = 8080
+    val port: Int = 8080,
+    
+    // Phase 6: Hardware-Adaptive AI Extensions
+    @SerialName("available_ram_mb")
+    val availableRamMb: Long? = null,
+    
+    @SerialName("cpu_architecture")
+    val cpuArchitecture: String? = null,
+    
+    @SerialName("ai_runtime")
+    val aiRuntime: String? = null,
+    
+    @SerialName("llm_available")
+    val llmAvailable: Boolean? = null,
+    
+    @SerialName("model_name")
+    val modelName: String? = null,
+    
+    @SerialName("model_size_mb")
+    val modelSizeMb: Int? = null,
+    
+    @SerialName("max_context_tokens")
+    val maxContextTokens: Int? = null,
+    
+    @SerialName("max_output_tokens")
+    val maxOutputTokens: Int? = null,
+    
+    @SerialName("max_concurrent_inference")
+    val maxConcurrentInference: Int? = null
 )
+
+object Capabilities {
+    const val WORKER = "worker"
+    const val CALCULATE = "calculate"
+    const val LLM = "llm"
+}
