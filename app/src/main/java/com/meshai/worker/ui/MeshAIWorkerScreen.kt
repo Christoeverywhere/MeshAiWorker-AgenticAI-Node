@@ -65,6 +65,32 @@ fun MeshAIWorkerScreen(viewModel: WorkerViewModel = viewModel()) {
             Spacer(modifier = Modifier.height(24.dp))
 
             DeviceInfoCard(uiState.nodeInfo, uiState.lastHeartbeat)
+
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            AICapabilityCard(uiState.nodeInfo)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            TaskStatusCard(uiState.currentTask, uiState.tasksCompleted, uiState.tasksFailed)
+        }
+    }
+}
+
+@Composable
+fun TaskStatusCard(currentTask: String, completed: Int, failed: Int) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Info, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Task Execution", style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            InfoRow("Current Task", currentTask)
+            InfoRow("Tasks Completed", completed.toString())
+            InfoRow("Tasks Failed", failed.toString())
         }
     }
 }
@@ -170,6 +196,35 @@ fun DeviceInfoCard(nodeInfo: com.meshai.worker.model.NodeInfo?, lastHeartbeat: S
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
             
             InfoRow("Last Heartbeat", lastHeartbeat)
+        }
+    }
+}
+
+@Composable
+fun AICapabilityCard(nodeInfo: com.meshai.worker.model.NodeInfo?) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Info, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("AI Readiness", style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            val isAvailable = nodeInfo?.llmAvailable == true
+            InfoRow("AI Capability", if (isAvailable) "Available" else "Unavailable")
+            InfoRow("Model", nodeInfo?.modelName ?: "Not installed")
+            
+            if (isAvailable) {
+                InfoRow("Runtime", nodeInfo?.aiRuntime ?: "Unknown")
+            }
+            
+            val aiMemStr = if (nodeInfo?.availableRamMb != null) "${nodeInfo.availableRamMb} MB" else "Not available"
+            InfoRow("AI Memory", aiMemStr)
+            
+            if (isAvailable) {
+                InfoRow("Context", "${nodeInfo?.maxContextTokens ?: 0} tokens")
+            }
         }
     }
 }
